@@ -91,7 +91,9 @@ public class PipelineStageViewExtractorTest {
             // the stage ran, so its console log is reported under its own name
             Map<String, Set<String>> logs = PipelineStageViewExtractor.getConsoleLogs(run);
             assertThat(result.toString(), logs, hasKey("inner"));
-            assertThat(result.toString(), logs.get("inner"), hasItem("in\n"));
+            // the log keeps the agent's line separator, \r\n on Windows
+            assertThat(result.toString(), logs.get("inner").stream().map(String::strip).collect(Collectors.toList()),
+                    hasItem("in"));
         }
     }
 
